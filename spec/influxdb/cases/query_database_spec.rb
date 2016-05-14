@@ -29,6 +29,18 @@ describe InfluxDB::Client do
     end
   end
 
+  describe "#create_database if_not_exists" do
+    before do
+      stub_request(:get, "http://influxdb.test:9999/query").with(
+        query: { u: "username", p: "password", q: "CREATE DATABASE IF NOT EXISTS foo" }
+      )
+    end
+
+    it "should GET to create a new database only in case it does not exist" do
+      expect(subject.create_database("foo", true)).to be_a(Net::HTTPOK)
+    end
+  end
+
   describe "#delete_database" do
     before do
       stub_request(:get, "http://influxdb.test:9999/query").with(
